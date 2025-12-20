@@ -1,0 +1,59 @@
+# ========================
+# General
+# ========================
+.DS_Store
+Thumbs.db
+*.log
+
+# ========================
+# C# / .NET backend
+# ========================
+backend/bin/
+backend/obj/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Rider / VS
+.idea/
+.vs/
+
+# ========================
+# Angular / Frontend
+# ========================
+frontend/node_modules/
+frontend/dist/
+frontend/.angular/
+frontend/.cache/
+frontend/.vscode/
+
+# Angular build artifacts
+frontend/**/*.js
+frontend/**/*.map
+frontend/**/*.css
+
+# ========================
+# Environment files
+# ========================
+frontend/src/environments/environment*.ts
+!frontend/src/environments/environment.ts
+
+# ========================
+# npm / tooling
+# ========================
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ========================
+# Coverage / testing
+# ========================
+coverage/
+
+# ========================
+# Editor swap files
+# ========================
+*~
+*.swp
+*.swo
