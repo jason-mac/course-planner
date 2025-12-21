@@ -9,4 +9,6 @@ public class ApplicationDbContext : DbContext
         : base(options)
     {
     }
+
+    public DbSet<Course> Courses { get; set; } = null!;
 }
