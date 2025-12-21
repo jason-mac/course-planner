@@ -1,25 +1,16 @@
-using System.ComponentModel.DataAnnotations;
-namespace Backend.Models;
+namespace Backend.Dtos.Course;
 
-public class Course
+public class CourseDto
 {
     public int CourseId { get; set; }
 
-    [Required]
-    [MaxLength(10)]
     public string Department { get; set; } = string.Empty;
 
-    [Required]
     public int Number { get; set; }
 
-    [Required]
-    [MaxLength(200)]
     public string Title { get; set; } = string.Empty;
 
-    [Required]
-    [MaxLength(1000)]
     public string Description { get; set; } = string.Empty;
 
     public int Credits { get; set; }
 }
-
