@@ -1,20 +1,15 @@
 using Microsoft.EntityFrameworkCore;
 using Backend.Data;
+using Backend.Interfaces;
+using Backend.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// --------------------
-// Services
-// --------------------
-
-// Controllers (JSON API)
 builder.Services.AddControllers();
 
-// Swagger / OpenAPI
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Entity Framework Core + PostgreSQL
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
     options.UseNpgsql(
@@ -22,11 +17,9 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     );
 });
 
-var app = builder.Build();
+builder.Services.AddScoped<ICourseRepository, CourseRepository>();
 
-// --------------------
-// Middleware
-// --------------------
+var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
