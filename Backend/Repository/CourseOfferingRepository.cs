@@ -13,12 +13,12 @@ public class CourseOfferingRepository : ICourseOfferingRepository
         _db = db;
     }
 
-    public Task<List<CourseOffering>> GetByCourseIdAsync(int courseId)
+    public Task<List<CourseOffering>> GetAllAsync(int courseId)
     {
         throw new NotImplementedException();
     }
 
-    public Task<CourseOffering?> GetByIdAsync(int offeringId)
+    public Task<CourseOffering?> GetByIdAsync(int courseId, int offeringId)
     {
         throw new NotImplementedException();
     }
