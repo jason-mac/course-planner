@@ -66,4 +66,23 @@ public class CoursesController : ControllerBase
         var deleted = await _courseRepo.DeleteAsync(id);
         return deleted ? NoContent() : NotFound();
     }
+
+    [HttpPost("{courseId}/prerequisites/{prereqId}")]
+    public async Task<IActionResult> AddPrerequisite([FromRoute] int courseId, [FromRoute] int prereqId)
+    {
+        var added = await _courseRepo.AddPrerequisiteAsync(courseId, prereqId);
+
+        if (!added)
+            return BadRequest();
+        return NoContent();
+    }
+
+    [HttpDelete("{courseId}/prerequisites/{prereqId}")]
+    public async Task<IActionResult> RemovePrerequisite([FromRoute] int courseId, [FromRoute] int prereqId)
+    {
+        var removed = await _courseRepo.RemovePrerequisiteAsync(courseId, prereqId);
+        if (!removed)
+            return BadRequest();
+        return NoContent();
+    }
 }

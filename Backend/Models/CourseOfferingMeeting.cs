@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Backend.Enums;
 
 namespace Backend.Models;
 public class CourseOfferingMeeting

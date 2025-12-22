@@ -8,4 +8,3 @@ public class CoursePrerequisite
     public int PrerequisiteId { get; set; }
     public Course? Prerequisite { get; set; }
 }
-

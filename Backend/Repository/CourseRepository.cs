@@ -92,4 +92,39 @@ public class CourseRepository : ICourseRepository
         await _db.SaveChangesAsync();
         return true;
     }
+
+    public async Task<bool> AddPrerequisiteAsync(int courseId, int prereqId)
+    {
+        bool courseExists = await _db.Courses.AnyAsync(c => c.CourseId == courseId);
+        if (!courseExists)
+            return false;
+
+        bool prereqExists = await _db.Courses.AnyAsync(c => c.CourseId == prereqId);
+        if (!prereqExists)
+            return false;
+
+        bool alreadyExists = await _db.CoursePrerequisites.AnyAsync(cp => cp.CourseId == courseId && cp.PrerequisiteId == prereqId);
+        if (alreadyExists)
+            return false;
+
+        var toAdd = new CoursePrerequisite { CourseId = courseId, PrerequisiteId = prereqId };
+        await _db.CoursePrerequisites.AddAsync(toAdd);
+        await _db.SaveChangesAsync();
+        return true;
+    }
+
+    public async Task<bool> RemovePrerequisiteAsync(int courseId, int prereqId)
+    {
+        var record = await _db.CoursePrerequisites
+            .FirstOrDefaultAsync(cp =>
+                cp.CourseId == courseId &&
+                cp.PrerequisiteId == prereqId);
+
+        if (record == null)
+            return false;
+
+        _db.CoursePrerequisites.Remove(record);
+        await _db.SaveChangesAsync();
+        return true;
+    }
 }
