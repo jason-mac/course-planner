@@ -3,7 +3,6 @@ using Backend.Enums;
 namespace Backend.Dtos.CourseOfferingMeeting;
 public class CreateCourseOfferingMeetingDto
 {
-
     public Day Day { get; set; }
 
     public TimeSpan? StartTime { get; set; }
