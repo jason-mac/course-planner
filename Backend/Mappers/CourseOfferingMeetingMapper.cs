@@ -9,17 +9,35 @@ public static class CourseOfferingMeetingMapper
     {
         return new CourseOfferingMeetingDto
         {
+            MeetingId = meeting.MeetingId,
+            Day = meeting.Day,
+            StartTime = meeting.StartTime,
+            EndTime = meeting.EndTime,
+            Location = meeting.Location,
+            Type = meeting.Type
         };
     }
 
-    public static CourseOfferingMeetingDto ToCourseModel(this CreateCourseOfferingMeetingDto dto)
+    public static CourseOfferingMeeting ToCourseOfferingMeeting(this CreateCourseOfferingMeetingDto dto)
     {
-        return new CourseOfferingMeetingDto
+        return new CourseOfferingMeeting
         {
+            Day = dto.Day,
+            StartTime = dto.StartTime,
+            EndTime = dto.EndTime,
+            Location = dto.Location,
+            Type = dto.Type
         };
     }
 
-    public static void ApplyUpdate(this CourseOfferingMeeting meeting, UpdateCourseOfferingMeetingDto dto)
+    public static void ApplyUpdate(
+        this CourseOfferingMeeting meeting,
+        UpdateCourseOfferingMeetingDto dto)
     {
+        meeting.Day = dto.Day;
+        meeting.StartTime = dto.StartTime;
+        meeting.EndTime = dto.EndTime;
+        meeting.Location = dto.Location;
+        meeting.Type = dto.Type;
     }
 }
