@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Mvc;
-using Backend.Data;
 using Backend.Interfaces;
 using Backend.Mappers;
 using Backend.Dtos.Course;
@@ -10,45 +9,47 @@ namespace Backend.Controllers;
 [Route("api/courses")]
 public class CoursesController : ControllerBase
 {
-    private readonly ApplicationDbContext _db;
     private readonly ICourseRepository _courseRepo;
 
-    public CoursesController(ApplicationDbContext db, ICourseRepository courseRepo)
+    public CoursesController(ICourseRepository courseRepo)
     {
-        this._db = db;
-        this._courseRepo = courseRepo;
+        _courseRepo = courseRepo;
     }
 
     [HttpGet]
     public async Task<IActionResult> GetAllCourses()
     {
         var courses = await _courseRepo.GetAllAsync();
-        return courses == null ? NotFound() : Ok(courses.Select(c => c.ToCourseDto()));
+        return Ok(courses.Select(c => c.ToCourseDto()));
     }
 
     [HttpGet("{id:int}")]
-    public async Task<IActionResult> GetById([FromRoute] int id)
+    public async Task<IActionResult> GetById(int id)
     {
         var course = await _courseRepo.GetByIdAsync(id);
         return course == null ? NotFound() : Ok(course.ToCourseDto());
     }
 
-    [HttpGet]
-    public async Task<IActionResult> Create([FromRoute] CreateCourseDto dto)
+    [HttpPost]
+    public async Task<IActionResult> Create([FromBody] CreateCourseDto dto)
     {
         var course = await _courseRepo.Create(dto);
-        return Ok(course);
+        if (course == null)
+        {
+            return BadRequest("Failed to create course");
+        }
+        return CreatedAtAction(nameof(GetById), new { id = course.CourseId }, course.ToCourseDto());
     }
 
     [HttpPut("{id:int}")]
-    public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateCourseDto dto)
+    public async Task<IActionResult> Update(int id, [FromBody] UpdateCourseDto dto)
     {
         var course = await _courseRepo.Update(id, dto);
         return course == null ? NotFound() : Ok(course.ToCourseDto());
     }
 
     [HttpDelete("{id:int}")]
-    public async Task<IActionResult> Delete([FromRoute] int id)
+    public async Task<IActionResult> Delete(int id)
     {
         var deleted = await _courseRepo.Delete(id);
         return deleted ? NoContent() : NotFound();
