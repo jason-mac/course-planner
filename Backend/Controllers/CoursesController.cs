@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Backend.Interfaces;
 using Backend.Mappers;
 using Backend.Dtos.Course;
+using Backend.Queries;
 
 namespace Backend.Controllers;
 
@@ -17,9 +18,13 @@ public class CoursesController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAllCourses()
+    public async Task<IActionResult> GetAll([FromQuery] CourseQuery query)
     {
-        var courses = await _courseRepo.GetAllAsync();
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+        var courses = await _courseRepo.GetAllAsync(query);
         return Ok(courses.Select(c => c.ToCourseDto()));
     }
 
@@ -30,10 +35,17 @@ public class CoursesController : ControllerBase
         return course == null ? NotFound() : Ok(course.ToCourseDto());
     }
 
+    [HttpGet("{id:int}")]
+    public async Task<IActionResult> GetPrequisites(int id)
+    {
+        var prereqs = await _courseRepo.GetPrerequisitesAsync(id);
+        return prereqs == null ? NotFound() : Ok(prereqs);
+    }
+
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreateCourseDto dto)
     {
-        var course = await _courseRepo.Create(dto);
+        var course = await _courseRepo.CreateAsync(dto);
         if (course == null)
         {
             return BadRequest("Failed to create course");
@@ -44,14 +56,14 @@ public class CoursesController : ControllerBase
     [HttpPut("{id:int}")]
     public async Task<IActionResult> Update(int id, [FromBody] UpdateCourseDto dto)
     {
-        var course = await _courseRepo.Update(id, dto);
+        var course = await _courseRepo.UpdateAsync(id, dto);
         return course == null ? NotFound() : Ok(course.ToCourseDto());
     }
 
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var deleted = await _courseRepo.Delete(id);
+        var deleted = await _courseRepo.DeleteAsync(id);
         return deleted ? NoContent() : NotFound();
     }
 }

@@ -1,5 +1,5 @@
-using Backend.Models;
 using Backend.Dtos.Course;
+using Backend.Models;
 
 namespace Backend.Mappers;
 

@@ -2,15 +2,13 @@ namespace Backend.Queries;
 
 public class CourseQuery
 {
-    public string? Department { get; set; }
+    public string? SubjectCode { get; set; }
+
+    public int? CourseNumber { get; set; }
 
     public int? MinYear { get; set; }
 
     public int? MaxYear { get; set; }
-
-    public string? Subject { get; set; }
-
-    public string? Number { get; set; }
 
     public string? Title { get; set; }
 
