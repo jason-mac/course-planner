@@ -35,7 +35,7 @@ public class CoursesController : ControllerBase
         return course == null ? NotFound() : Ok(course.ToCourseDto());
     }
 
-    [HttpGet("{id:int}")]
+    [HttpGet("{id:int}/prerequisites")]
     public async Task<IActionResult> GetPrequisites(int id)
     {
         var prereqs = await _courseRepo.GetPrerequisitesAsync(id);
