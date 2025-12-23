@@ -1,13 +1,11 @@
 using Backend.Interfaces;
 using Backend.Dtos.CourseOffering;
 using Backend.Dtos.CourseOfferingMeeting;
+using Backend.Mappers;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Backend.Controllers;
 
-/// <summary>
-/// Handles CRUD operations for course offerings belonging to a specific course.
-/// </summary>
 [ApiController]
 [Route("api/courses/{courseId}/offerings")]
 public class CourseOfferingsController : ControllerBase
@@ -16,28 +14,29 @@ public class CourseOfferingsController : ControllerBase
 
     public CourseOfferingsController(ICourseOfferingRepository offeringRepo)
     {
-        this._offeringRepo = offeringRepo;
+        _offeringRepo = offeringRepo;
     }
 
-    // GET /api/courses/{courseId}/offerings
     [HttpGet]
     public async Task<IActionResult> GetAll(int courseId)
     {
         var offerings = await _offeringRepo.GetAllAsync(courseId);
-        return offerings == null ? NotFound() : Ok(offerings);
+        return offerings == null
+            ? NotFound()
+            : Ok(offerings.Select(o => o.ToCourseOfferingDto()));
     }
 
-    // GET /api/courses/{courseId}/offerings/{offeringId}
     [HttpGet("{offeringId:int}")]
     public async Task<IActionResult> GetById(
         [FromRoute] int courseId,
         [FromRoute] int offeringId)
     {
         var offering = await _offeringRepo.GetByIdAsync(courseId, offeringId);
-        return offering == null ? NotFound() : Ok(offering);
+        return offering == null
+            ? NotFound()
+            : Ok(offering.ToCourseOfferingDto());
     }
 
-    // POST /api/courses/{courseId}/offerings
     [HttpPost]
     public async Task<IActionResult> Create(
         [FromRoute] int courseId,
@@ -49,11 +48,10 @@ public class CourseOfferingsController : ControllerBase
             : CreatedAtAction(
                 nameof(GetById),
                 new { courseId, offeringId = offering.OfferingId },
-                offering
+                offering.ToCourseOfferingDto()
             );
     }
 
-    // PUT /api/courses/{courseId}/offerings/{offeringId}
     [HttpPut("{offeringId:int}")]
     public async Task<IActionResult> Update(
         [FromRoute] int courseId,
@@ -64,7 +62,6 @@ public class CourseOfferingsController : ControllerBase
         return updated == null ? NotFound() : NoContent();
     }
 
-    // DELETE /api/courses/{courseId}/offerings/{offeringId}
     [HttpDelete("{offeringId:int}")]
     public async Task<IActionResult> Delete(
         [FromRoute] int courseId,
@@ -74,17 +71,17 @@ public class CourseOfferingsController : ControllerBase
         return deleted ? NoContent() : NotFound();
     }
 
-    // GET /api/courses/{courseId}/offerings/{offeringId}/meetings
     [HttpGet("{offeringId:int}/meetings")]
     public async Task<IActionResult> GetMeetings(
         [FromRoute] int courseId,
         [FromRoute] int offeringId)
     {
         var meetings = await _offeringRepo.GetMeetingsAsync(offeringId);
-        return meetings == null ? NotFound() : Ok(meetings);
+        return meetings == null
+            ? NotFound()
+            : Ok(meetings.Select(m => m.ToCourseOfferingMeetingDto()));
     }
 
-    // POST /api/courses/{courseId}/offerings/{offeringId}/meetings
     [HttpPost("{offeringId:int}/meetings")]
     public async Task<IActionResult> AddMeeting(
         [FromRoute] int courseId,
@@ -92,10 +89,11 @@ public class CourseOfferingsController : ControllerBase
         [FromBody] CreateCourseOfferingMeetingDto dto)
     {
         var meeting = await _offeringRepo.AddMeetingAsync(offeringId, dto);
-        return meeting == null ? NotFound() : Ok(meeting);
+        return meeting == null
+            ? NotFound()
+            : Ok(meeting.ToCourseOfferingMeetingDto());
     }
 
-    // DELETE /api/courses/{courseId}/offerings/{offeringId}/meetings/{meetingId}
     [HttpDelete("{offeringId:int}/meetings/{meetingId:int}")]
     public async Task<IActionResult> RemoveMeeting(
         [FromRoute] int courseId,

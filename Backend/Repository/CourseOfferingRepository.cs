@@ -1,6 +1,10 @@
 using Backend.Interfaces;
 using Backend.Models;
 using Backend.Data;
+using Microsoft.EntityFrameworkCore;
+using Backend.Dtos.CourseOffering;
+using Backend.Dtos.CourseOfferingMeeting;
+using Backend.Mappers;
 
 namespace Backend.Repository;
 
@@ -13,43 +17,129 @@ public class CourseOfferingRepository : ICourseOfferingRepository
         _db = db;
     }
 
-    public Task<List<CourseOffering>> GetAllAsync(int courseId)
+    public async Task<List<CourseOffering>> GetAllAsync(int courseId)
     {
-        throw new NotImplementedException();
+        return await _db.CourseOfferings
+          .Where(o => o.CourseId == courseId)
+          .Include(o => o.Meetings)
+          .ToListAsync();
     }
 
-    public Task<CourseOffering?> GetByIdAsync(int courseId, int offeringId)
+    public async Task<CourseOffering?> GetByIdAsync(int courseId, int offeringId)
     {
-        throw new NotImplementedException();
+        return await _db.CourseOfferings
+          .Include(o => o.Meetings)
+          .FirstOrDefaultAsync(o =>
+              o.CourseId == courseId &&
+              o.OfferingId == offeringId);
     }
 
-    public Task<CourseOffering?> CreateAsync(int courseId, CourseOffering offering)
+    public async Task<CourseOffering?> CreateAsync(
+     int courseId,
+     CreateCourseOfferingDto dto)
     {
-        throw new NotImplementedException();
+        bool courseExists = await _db.Courses.AnyAsync(c => c.CourseId == courseId);
+        if (!courseExists)
+            return null;
+
+        var offering = new CourseOffering
+        {
+            CourseId = courseId,
+            Term = dto.Term,
+            Section = dto.Section
+        };
+
+        _db.CourseOfferings.Add(offering);
+        await _db.SaveChangesAsync();
+
+        foreach (var m in dto.Meetings)
+        {
+            _db.CourseOfferingMeetings.Add(new CourseOfferingMeeting
+            {
+                OfferingId = offering.OfferingId,
+                Day = m.Day,
+                StartTime = m.StartTime,
+                EndTime = m.EndTime,
+                Location = m.Location,
+                Type = m.Type
+            });
+        }
+
+        await _db.SaveChangesAsync();
+
+        await _db.Entry(offering)
+            .Collection(o => o.Meetings)
+            .LoadAsync();
+
+        return offering;
     }
 
-    public Task<CourseOffering?> UpdateAsync(int offeringId, CourseOffering offering)
+    public async Task<CourseOffering?> UpdateAsync(
+     int offeringId,
+     UpdateCourseOfferingDto dto)
     {
-        throw new NotImplementedException();
+        var offering = await _db.CourseOfferings
+            .Include(o => o.Meetings)
+            .FirstOrDefaultAsync(o => o.OfferingId == offeringId);
+
+        if (offering == null)
+            return null;
+        offering.ApplyUpdate(dto);
+        await _db.SaveChangesAsync();
+        return offering;
     }
 
-    public Task<bool> DeleteAsync(int offeringId)
+    public async Task<bool> DeleteAsync(int offeringId)
     {
-        throw new NotImplementedException();
+        var offering = await _db.CourseOfferings.FindAsync(offeringId);
+        if (offering == null)
+            return false;
+
+        _db.CourseOfferings.Remove(offering);
+        await _db.SaveChangesAsync();
+        return true;
     }
 
-    public Task<List<CourseOfferingMeeting>> GetMeetingsAsync(int offeringId)
+    public async Task<List<CourseOfferingMeeting>> GetMeetingsAsync(int offeringId)
     {
-        throw new NotImplementedException();
+        return await _db.CourseOfferingMeetings
+            .Where(m => m.OfferingId == offeringId)
+            .ToListAsync();
     }
 
-    public Task<CourseOfferingMeeting?> AddMeetingAsync(int offeringId, CourseOfferingMeeting meeting)
+    public async Task<CourseOfferingMeeting?> AddMeetingAsync(
+        int offeringId,
+        CreateCourseOfferingMeetingDto dto)
     {
-        throw new NotImplementedException();
+        var offeringExists = await _db.CourseOfferings
+            .AnyAsync(o => o.OfferingId == offeringId);
+
+        if (!offeringExists)
+            return null;
+
+        var meeting = dto.ToCourseOfferingMeeting();
+        meeting.OfferingId = offeringId;
+
+        _db.CourseOfferingMeetings.Add(meeting);
+        await _db.SaveChangesAsync();
+
+        return meeting;
     }
 
-    public Task<bool> RemoveMeetingAsync(int offeringId, int meetingId)
+    public async Task<bool> RemoveMeetingAsync(
+        int offeringId,
+        int meetingId)
     {
-        throw new NotImplementedException();
+        var meeting = await _db.CourseOfferingMeetings
+            .FirstOrDefaultAsync(m =>
+                m.OfferingId == offeringId &&
+                m.MeetingId == meetingId);
+
+        if (meeting == null)
+            return false;
+
+        _db.CourseOfferingMeetings.Remove(meeting);
+        await _db.SaveChangesAsync();
+        return true;
     }
 }
