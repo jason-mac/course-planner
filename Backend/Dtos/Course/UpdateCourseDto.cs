@@ -1,9 +1,7 @@
-namespace Backend.Models;
+namespace Backend.Dtos.Course;
 
-public class Course
+public class UpdateCourseDto
 {
-    public int CourseId { get; set; }
-
     public string SubjectCode { get; set; } = string.Empty;
 
     public int CourseNumber { get; set; }
@@ -14,4 +12,3 @@ public class Course
 
     public int Credits { get; set; }
 }
-

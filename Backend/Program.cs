@@ -1,20 +1,23 @@
 using Microsoft.EntityFrameworkCore;
 using Backend.Data;
+using Backend.Interfaces;
+using Backend.Repository;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// --------------------
-// Services
-// --------------------
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+      {
+          options.JsonSerializerOptions.Converters.Add(
+              new JsonStringEnumConverter()
+          );
+      }
+    );
 
-// Controllers (JSON API)
-builder.Services.AddControllers();
-
-// Swagger / OpenAPI
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Entity Framework Core + PostgreSQL
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
     options.UseNpgsql(
@@ -22,11 +25,10 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     );
 });
 
-var app = builder.Build();
+builder.Services.AddScoped<ICourseRepository, CourseRepository>();
+builder.Services.AddScoped<ICourseOfferingRepository, CourseOfferingRepository>();
 
-// --------------------
-// Middleware
-// --------------------
+var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
