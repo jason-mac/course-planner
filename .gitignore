@@ -6,53 +6,48 @@ Thumbs.db
 *.log
 
 # ========================
-# C# / .NET backend
+# Git
 # ========================
-backend/bin/
-backend/obj/
+.git/
+
+# ========================
+# C# / .NET Backend
+# ========================
+Backend/bin/
+Backend/obj/
+
 *.user
 *.suo
 *.userosscache
 *.sln.docstates
 
-# Rider / VS
+# Rider / Visual Studio
 .idea/
 .vs/
 
 # ========================
-# Angular / Frontend
+# React / Vite Frontend
 # ========================
-frontend/node_modules/
-frontend/dist/
-frontend/.angular/
-frontend/.cache/
-frontend/.vscode/
+Frontend/node_modules/
+Frontend/dist/
+Frontend/.vite/
+Frontend/.cache/
 
-# Angular build artifacts
-frontend/**/*.js
-frontend/**/*.map
-frontend/**/*.css
+# Env files (keep .env.example if you have one)
+Frontend/.env
+Frontend/.env.local
+Frontend/.env.*.local
 
-# ========================
-# Environment files
-# ========================
-frontend/src/environments/environment*.ts
-!frontend/src/environments/environment.ts
+# Editor settings (frontend-specific)
+Frontend/.vscode/
 
 # ========================
-# npm / tooling
-# ========================
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# ========================
-# Coverage / testing
+# Testing / Coverage
 # ========================
 coverage/
 
 # ========================
-# Editor swap files
+# Editor swap / temp files
 # ========================
 *~
 *.swp
