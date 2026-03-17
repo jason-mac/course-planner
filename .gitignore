@@ -8,8 +8,8 @@ Thumbs.db
 # ========================
 # C# / .NET backend
 # ========================
-backend/bin/
-backend/obj/
+bin/
+obj/
 *.user
 *.suo
 *.userosscache
@@ -20,24 +20,20 @@ backend/obj/
 .vs/
 
 # ========================
-# Angular / Frontend
+# React / Frontend
 # ========================
 frontend/node_modules/
 frontend/dist/
-frontend/.angular/
+frontend/.vite/
 frontend/.cache/
 frontend/.vscode/
-
-# Angular build artifacts
-frontend/**/*.js
-frontend/**/*.map
-frontend/**/*.css
 
 # ========================
 # Environment files
 # ========================
-frontend/src/environments/environment*.ts
-!frontend/src/environments/environment.ts
+frontend/.env
+frontend/.env.local
+frontend/.env.production
 
 # ========================
 # npm / tooling
