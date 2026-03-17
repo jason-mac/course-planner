@@ -16,7 +16,6 @@ public class CourseRepository : ICourseRepository
     public CourseRepository(ApplicationDbContext db)
     {
         this._db = db;
-
     }
 
     public async Task<List<Course>> GetAllAsync(CourseQuery query)

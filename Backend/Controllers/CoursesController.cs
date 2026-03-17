@@ -18,12 +18,8 @@ public class CoursesController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAll([FromQuery] CourseQuery query)
+    public async Task<ActionResult<List<CourseDto>>> GetAll([FromQuery] CourseQuery query)
     {
-        if (!ModelState.IsValid)
-        {
-            return BadRequest(ModelState);
-        }
         var courses = await _courseRepo.GetAllAsync(query);
         return Ok(courses.Select(c => c.ToCourseDto()));
     }
@@ -46,10 +42,7 @@ public class CoursesController : ControllerBase
     public async Task<IActionResult> Create([FromBody] CreateCourseDto dto)
     {
         var course = await _courseRepo.CreateAsync(dto);
-        if (course == null)
-        {
-            return BadRequest("Failed to create course");
-        }
+        if (course == null) return BadRequest("Failed to create course");
         return CreatedAtAction(nameof(GetById), new { id = course.CourseId }, course.ToCourseDto());
     }
 
@@ -68,7 +61,10 @@ public class CoursesController : ControllerBase
     }
 
     [HttpPost("{courseId}/prerequisites/{prereqId}")]
-    public async Task<IActionResult> AddPrerequisite([FromRoute] int courseId, [FromRoute] int prereqId)
+    public async Task<IActionResult> AddPrerequisite(
+        [FromRoute] int courseId,
+        [FromRoute] int prereqId
+      )
     {
         var added = await _courseRepo.AddPrerequisiteAsync(courseId, prereqId);
 

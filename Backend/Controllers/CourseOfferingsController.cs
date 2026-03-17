@@ -1,4 +1,5 @@
 using Backend.Interfaces;
+using Backend.Dtos.Course;
 using Backend.Dtos.CourseOffering;
 using Backend.Dtos.CourseOfferingMeeting;
 using Backend.Mappers;
@@ -18,7 +19,7 @@ public class CourseOfferingsController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAll(int courseId)
+    public async Task<ActionResult<List<CourseOfferingDto>>> GetAll(int courseId)
     {
         var offerings = await _offeringRepo.GetAllAsync(courseId);
         return offerings == null
@@ -72,7 +73,7 @@ public class CourseOfferingsController : ControllerBase
     }
 
     [HttpGet("{offeringId:int}/meetings")]
-    public async Task<IActionResult> GetMeetings(
+    public async Task<ActionResult<List<CourseOfferingMeetingDto>>> GetMeetings(
         [FromRoute] int courseId,
         [FromRoute] int offeringId)
     {
